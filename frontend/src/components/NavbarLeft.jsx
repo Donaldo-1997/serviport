@@ -22,7 +22,7 @@ export const NavbarLeft = () => {
                 <hr className="sidebar-divider" />
 
                 <li>
-                    <NavLink to="/ordenes" className="border-0 list-group-item list-group-item-action">
+                    <NavLink to="/mostrar-ordenes" className="border-0 list-group-item list-group-item-action">
                         <span>Ordenes de despacho</span>
                     </NavLink>
                 </li>

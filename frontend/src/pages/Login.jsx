@@ -8,11 +8,11 @@ import { Header } from '../components/Header';
 export default function Login(props) {
     const [ users, setUsers ] = useState([])
     // traigo datos de la DB
-    useEffect(() => {
-        fetch('http://localhost:3004/users')
-            .then(res => res.json())
-            .then(data => setUsers(data))
-    }, [])
+    // useEffect(() => {
+    //     fetch('http://localhost:3004/users')
+    //         .then(res => res.json())
+    //         .then(data => setUsers(data))
+    // }, [])
 
     // Obtengo los datos de los campos de texto
     const email = useRef();
