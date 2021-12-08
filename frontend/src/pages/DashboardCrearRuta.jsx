@@ -1,9 +1,59 @@
-import React from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+
 import { NavbarLeft } from '../components/NavbarLeft';
+import { ModalRuta } from '../components/ModalRuta';
 
 export default function Dashboard() {
+    const [ rutas, setRutas ] = useState([])
+
+    useEffect(() => {
+        axios.get('http://localhost:8082/api/rutas')
+            .then(res => setRutas(res.data))
+            .catch(error => console.log(error))
+    }, [])
+
+    const puertoOrigen = useRef()
+    const puertoDestino = useRef()
+    const distancia = useRef()
+
+
+    function guardar() {
+        let datos = { 
+            origen: puertoOrigen.current.value, 
+            destino: puertoDestino.current.value,
+            distancia: distancia.current.value
+        }
+        
+         // Envío los datos al servidor de la DB
+         // Para enviar datos a la DB los nombres de cada campo requerido debe ser igual
+         // al que está en la DB. En este caso "nombre" y "ubicacion".
+        axios.post('http://localhost:8082/api/rutas', datos)
+            .then(res => {
+                // Limpio los campos de texto
+                puertoOrigen.current.value = ''
+                puertoDestino.current.value = ''
+                distancia.current.value = ''
+            
+            })
+            .catch(error => {
+                console.log("Error in Crear rutas!" + error)
+                console.log(datos)
+            })
+        
+        // Se vuelve a hacer una solicitud para que se renderice el nuevo puerto creado
+        axios.get('http://localhost:8082/api/rutas')
+            .then(res => {
+                setRutas(res.data)                
+            })
+            .catch(error => console.log(error))
+    }
+
+    let [ modal, setModal ] = useState([])
+
     return (
+        <Fragment>
         <div id="wrapper">
         
             {/*
@@ -257,21 +307,23 @@ export default function Dashboard() {
                                 <form className="g-3 mt-5">
                                     <div className="col-md-6 mx-auto">
                                         <label for="inputEmail4" className="form-label">Nombre del puerto origen</label>
-                                        <input type="text" className="form-control" id=""/>
+                                        <input ref={puertoOrigen} type="text" className="form-control" id=""/>
                                     </div>
         
                                     <div className="col-md-6 mx-auto">
                                         <label for="inputEmail4" className="form-label">Nombre del puerto destino</label>
-                                        <input type="text" className="form-control" id=""/>
+                                        <input ref={puertoDestino} type="text" className="form-control" id=""/>
                                     </div>
         
                                     <div className="col-md-6 mx-auto">
                                         <label for="inputCity" className="form-label">DIstancia entre los puertos</label>
-                                        <input type="text" className="form-control" id=""/>
+                                        <input ref={distancia} type="text" className="form-control" id=""/>
                                     </div>
         
                                     <div className="col-md-6 mt-5 mx-auto">
-                                        <button type="submit" className="btn btn-primary border-0"
+                                        <button 
+                                            onClick={guardar}
+                                            type="button" className="btn btn-primary border-0"
                                             style={{backgroundColor: "#4aff2f"}}>Crear</button>
                                     </div>
                                 </form>
@@ -298,14 +350,15 @@ export default function Dashboard() {
                                 </div>
                                 <h3>Rutas establecidas</h3>
                                 <div className="d-grid gap-2">
-                                    <button className="color-1 btn border-0 btn-block text-dark" type="button"
-                                        data-toggle="modal" data-target="#detalle_ruta">Origen - Destino (Distancia)</button>
-                                    <button className="color-1 btn border-0 btn-block text-dark" type="button"
-                                        data-toggle="modal" data-target="#detalle_ruta">Origen - Destino (Distancia)</button>
-                                    <button className="color-1 btn border-0 btn-block text-dark" type="button"
-                                        data-toggle="modal" data-target="#detalle_ruta">Origen - Destino (Distancia)</button>
-                                    <button className="color-1 btn border-0 btn-block text-dark" type="button"
-                                        data-toggle="modal" data-target="#detalle_ruta">Origen - Destino (Distancia)</button>
+                                    {rutas.map(ruta => {
+                                        return (
+                                            <button 
+                                                key={ruta._id}
+                                                onClick={() => setModal(ruta)}
+                                                className="color-1 btn border-0 btn-block text-dark" type="button"
+                                                data-toggle="modal" data-target="#detalle_ruta">{ruta.origen} - {ruta.destino} ({ruta.distancia})</button>
+                                        )
+                                    })}
                                 </div>
                             </div>
                             {/*
@@ -337,5 +390,7 @@ export default function Dashboard() {
             {/*
             <!-- End of Content Wrapper --> */}
         </div>        
+        <ModalRuta modal={modal} />
+        </Fragment>
     );
 }

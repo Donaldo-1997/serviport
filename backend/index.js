@@ -5,6 +5,7 @@ var cors = require('cors');
 // Routes
 const ordenes = require('./routes/api/ordenes');
 const puertos = require('./routes/api/puertos');
+const rutas = require('./routes/api/rutas');
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.get('/', (req, res) => res.send('serviport listo'));
 // use routes
 app.use('/api/ordenes', ordenes);
 app.use('/api/puertos', puertos);
+app.use('/api/rutas', rutas);
 
 const port = process.env.PORT || 8082;
 

@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { NavbarLeft } from '../components/NavbarLeft';
+import axios from 'axios';
 
 export default function DashboardOrdenesDespacho() {
+    const [ ordenes, setOrdenes ] = useState([])
+
+    useEffect(() => {
+        axios.get('http://localhost:8082/api/ordenes')
+            .then(res => {
+                setOrdenes(res.data)
+            })
+            .catch(error => console.log(error))
+    },[])
+
+
     return (
         <div id="wrapper">
             {/*< !--Page Wrapper-- >*/}
@@ -46,9 +58,9 @@ export default function DashboardOrdenesDespacho() {
                                             <input type="text" className="form-control bg-light border-0 small"
                                                 placeholder="Search for..." aria-label="Search"
                                                 aria-describedby="basic-addon2" />
-                                            <div class="input-group-append">
-                                                <button class="btn btn-primary" type="button">
-                                                    <i class="fas fa-search fa-sm"></i>
+                                            <div className="input-group-append">
+                                                <button className="btn btn-primary" type="button">
+                                                    <i className="fas fa-search fa-sm"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -125,7 +137,7 @@ export default function DashboardOrdenesDespacho() {
                                         <div className="dropdown-list-image mr-3">
                                             <img className="rounded-circle" src="img/undraw_profile_1.svg"
                                                 alt="..." />
-                                            <div class="status-indicator bg-success"></div>
+                                            <div className="status-indicator bg-success"></div>
                                         </div>
                                         <div className="font-weight-bold">
                                             <div className="text-truncate">Hi there! I am wondering if you can help me with a
@@ -137,7 +149,7 @@ export default function DashboardOrdenesDespacho() {
                                         <div className="dropdown-list-image mr-3">
                                             <img className="rounded-circle" src="img/undraw_profile_2.svg"
                                                 alt="..." />
-                                            <div class="status-indicator"></div>
+                                            <div className="status-indicator"></div>
                                         </div>
                                         <div>
                                             <div className="text-truncate">I have the photos that you ordered last month, how
@@ -149,7 +161,7 @@ export default function DashboardOrdenesDespacho() {
                                         <div className="dropdown-list-image mr-3">
                                             <img className="rounded-circle" src="img/undraw_profile_3.svg"
                                                 alt="..." />
-                                            <div class="status-indicator bg-warning"></div>
+                                            <div className="status-indicator bg-warning"></div>
                                         </div>
                                         <div>
                                             <div className="text-truncate">Last month's report looks great, I am very happy with
@@ -161,7 +173,7 @@ export default function DashboardOrdenesDespacho() {
                                         <div className="dropdown-list-image mr-3">
                                             <img className="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
                                                 alt="..." />
-                                            <div class="status-indicator bg-success"></div>
+                                            <div className="status-indicator bg-success"></div>
                                         </div>
                                         <div>
                                             <div className="text-truncate">Am I a good boy? The reason I ask is because someone
@@ -223,13 +235,13 @@ export default function DashboardOrdenesDespacho() {
                             {/*  <!-- </div> --> */}
 
                             {/*  <!--DataTales Example--> */}
-                            <div class="col-9 card shadow mb-4">
+                            <div className="col-9 card shadow mb-4">
                                 {/*  <!-- <div class ="card-header py-3">
                                 <h6 class ="m-0 font-weight-bold text-primary">DataTables Example</h6>
                                 </div> --> */}
-                                <div class="card-body">
-                                    <div class="table-responsive table-hover">
-                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <div className="card-body">
+                                    <div className="table-responsive table-hover">
+                                        <table className="table table-bordered" id="dataTable" width="100%" cellSpacing="0">
                                             <thead>
                                                 <tr>
                                                     <th>No.orden</th>
@@ -251,102 +263,26 @@ export default function DashboardOrdenesDespacho() {
                                 </tr>
                                 </tfoot> --> */}
                                             <tbody>
+                                                {ordenes.map((orden, _id) => {
+                                                    return (
+                                                        <tr key={_id}>
+                                                            <td>{_id}</td>
+                                                            <td>2011/04/25</td>
+                                                            <td>{orden.origen}</td>
+                                                            <td>{orden.destino}</td>
+                                                            <td>Pendiente</td>
+                                                            <td>Editar</td>
+                                                        </tr>
+                                                    )
+                                                })}
                                                 <tr>
-                                                    <td>10023</td>
-                                                    <td>2011/04/25</td>
-                                                    <td>Buenaventura</td>
-                                                    <td>Tokyo</td>
-                                                    <td>Pendiente</td>
-                                                    <td>Editar</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10023</td>
-                                                    <td>2011/04/25</td>
-                                                    <td>Buenaventura</td>
-                                                    <td>Tokyo</td>
-                                                    <td>Pendiente</td>
-                                                    <td>Editar</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10023</td>
-                                                    <td>2011/04/25</td>
-                                                    <td>Buenaventura</td>
-                                                    <td>Tokyo</td>
-                                                    <td>Pendiente</td>
-                                                    <td>Editar</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10023</td>
-                                                    <td>2011/04/25</td>
-                                                    <td>Buenaventura</td>
-                                                    <td>Tokyo</td>
-                                                    <td>Pendiente</td>
-                                                    <td>Editar</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10023</td>
-                                                    <td>2011/04/25</td>
-                                                    <td>Buenaventura</td>
-                                                    <td>Tokyo</td>
-                                                    <td>Pendiente</td>
-                                                    <td>Editar</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10023</td>
-                                                    <td>2011/04/25</td>
-                                                    <td>Buenaventura</td>
-                                                    <td>Tokyo</td>
-                                                    <td>Pendiente</td>
-                                                    <td>Editar</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10023</td>
-                                                    <td>2011/04/25</td>
-                                                    <td>Buenaventura</td>
-                                                    <td>Tokyo</td>
-                                                    <td>Pendiente</td>
-                                                    <td>Editar</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10023</td>
-                                                    <td>2011/04/25</td>
-                                                    <td>Buenaventura</td>
-                                                    <td>Tokyo</td>
-                                                    <td>Pendiente</td>
-                                                    <td>Editar</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10023</td>
-                                                    <td>2011/04/25</td>
-                                                    <td>Buenaventura</td>
-                                                    <td>Tokyo</td>
-                                                    <td>Pendiente</td>
-                                                    <td>Editar</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10023</td>
-                                                    <td>2011/04/25</td>
-                                                    <td>Buenaventura</td>
-                                                    <td>Tokyo</td>
-                                                    <td>Pendiente</td>
-                                                    <td>Editar</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10023</td>
-                                                    <td>2011/04/25</td>
-                                                    <td>Buenaventura</td>
-                                                    <td>Tokyo</td>
-                                                    <td>Pendiente</td>
-                                                    <td>Editar</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10023</td>
-                                                    <td>2011/04/25</td>
-                                                    <td>Buenaventura</td>
-                                                    <td>Tokyo</td>
-                                                    <td>Pendiente</td>
-                                                    <td>Editar</td>
-                                                </tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>                                                                                                                                            
                                             </tbody>
                                         </table>
                                     </div>
@@ -361,9 +297,9 @@ export default function DashboardOrdenesDespacho() {
                 {/*  <!--End of Main Content--> */}
 
                 {/*  <!--Footer--> */}
-                <footer class="sticky-footer bg-white">
-                    <div class="container my-auto">
-                        <div class="copyright text-center my-auto">
+                <footer className="sticky-footer bg-white">
+                    <div className="container my-auto">
+                        <div className="copyright text-center my-auto">
                             <span>Copyright &copy; Your Website 2021</span>
                         </div>
                     </div>

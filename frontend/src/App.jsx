@@ -50,6 +50,8 @@ export function App() {
                 <Route exact path="/crear-puerto" component={DashboardCrearPuerto} />
                 <Route exact path="/crear-ruta" component={DashboardCrearRuta} />
                 <Route exact path="/mostrar-ordenes" component={DashboardOrdenesDespacho} />
+                
+                {/* Para cualquier ruta desconocida */}
                 <Route path="*" component={<Error404/>} />
             </Switch>
         </Router>           

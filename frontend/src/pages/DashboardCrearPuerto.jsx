@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
 import {Link} from 'react-router-dom';
 import { NavbarLeft } from '../components/NavbarLeft';
 import axios from 'axios';
+
+import { ModalPuerto } from '../components/ModalPuerto';
 
 
 export default function DashboardCrearPuerto () {
@@ -10,9 +12,7 @@ export default function DashboardCrearPuerto () {
     useEffect(() => {
         axios.get('http://localhost:8082/api/puertos')
             .then(res => {
-                setPuertos(res.data)
-                console.log(`Puertos`)
-                console.log(res.data)
+                setPuertos(res.data)                
             })
             .catch(error => console.log(error))
     }, [])
@@ -22,23 +22,38 @@ export default function DashboardCrearPuerto () {
 
     function guardar() {
         let datos = { 
-            nom: nomPuerto.current.value, 
-            ubic: ubicPuerto.current.value
+            nombre: nomPuerto.current.value, 
+            ubicacion: ubicPuerto.current.value
         }
         
          // Envío los datos al servidor de la DB
+         // Para enviar datos a la DB los nombres de cada campo requerido debe ser igual
+         // al que está en la DB. En este caso "nombre" y "ubicacion".
         axios.post('http://localhost:8082/api/puertos', datos)
             .then(res => {
-                console.log(res.data)
                 // Limpio los campos de texto
                 nomPuerto.current.value = ''
                 ubicPuerto.current.value = ''
             
             })
-            .catch(error => console.log("Error in Crear puertos!" + error))
+            .catch(error => {
+                console.log("Error in Crear puertos!" + error)
+                console.log(datos)
+            })
+        
+        // Se vuelve a hacer una solicitud para que se renderice el nuevo puerto creado
+        axios.get('http://localhost:8082/api/puertos')
+            .then(res => {
+                setPuertos(res.data)                
+            })
+            .catch(error => console.log(error))
     }
 
+    let [ modal, setModal ] = useState([])
+
     return (
+        <Fragment>
+
         <div id="wrapper">      
         {/* <!-- Page Wrapper --> */}
     
@@ -47,8 +62,8 @@ export default function DashboardCrearPuerto () {
     
                 {/* <!-- Main Content --> */}
                 <div id="content">
-                    <header>
-                        <img src="/img/image 1.png" alt="" />
+                    <header className="col" >
+                        <img className="img-fluid" src="/img/image 1.png" alt="" />
                     </header>
     
                     {/* <!-- Topbar --> */}
@@ -289,7 +304,12 @@ export default function DashboardCrearPuerto () {
                                 <div className="d-grid gap-2">
                                     {puertos.map(puerto => {
                                         return (
-                                        <button className="color-1 btn border-0 btn-block text-dark" type="button" data-toggle="modal" data-target="#detalle_puerto1">
+                                        <button
+                                            key={puerto._id}
+                                            onClick={() => {
+                                                setModal(puerto)
+                                            }} 
+                                            className="color-1 btn border-0 btn-block text-dark" type="button" data-toggle="modal" data-target="#detalle_puerto1">
                                             {puerto.nombre} - {puerto.ubicacion}
                                         </button>
                                         )
@@ -320,5 +340,9 @@ export default function DashboardCrearPuerto () {
     
             {/* <!-- End of Page Wrapper --> */}
         </div>
+        <ModalPuerto modal={modal} />
+        {/* { modal ? <Modal modal={modal} /> : console.log(modal) } */}
+        </Fragment>
+
     );
 }
