@@ -1,0 +1,3 @@
+{
+    "mongoURI": "mongodb+srv://serviport:serviport@cluster0.hkqp4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+}
