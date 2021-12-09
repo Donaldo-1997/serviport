@@ -6,51 +6,83 @@ import { NavbarLeft } from '../components/NavbarLeft';
 import { ModalRuta } from '../components/ModalRuta';
 
 export default function Dashboard() {
+    
+    // Traigo los datos de rutas del servidor
     const [ rutas, setRutas ] = useState([])
-
-    useEffect(() => {
+    const getRutas = () => { 
         axios.get('http://localhost:8082/api/rutas')
-            .then(res => setRutas(res.data))
+        .then(res => setRutas(res.data))
+            .catch(error => console.log(error))
+    }
+    // Esto ejecutará la funcion cuando se renderice este componente
+    useEffect(() => getRutas(), [])
+        
+    // Traigo los datos de puertos del servidor    
+    const [ puertos, setPuertos ] = useState([])
+    useEffect(() => {
+        axios.get('http://localhost:8082/api/puertos')
+            .then(res => {
+                setPuertos(res.data)                
+            })
             .catch(error => console.log(error))
     }, [])
 
+    // TOMO LOS DATOS DE LOS CAMPOS DEL FORMULARIO
     const puertoOrigen = useRef()
     const puertoDestino = useRef()
     const distancia = useRef()
 
-
-    function guardar() {
+    function crearRuta() {
         let datos = { 
             origen: puertoOrigen.current.value, 
             destino: puertoDestino.current.value,
             distancia: distancia.current.value
         }
         
-         // Envío los datos al servidor de la DB
-         // Para enviar datos a la DB los nombres de cada campo requerido debe ser igual
-         // al que está en la DB. En este caso "nombre" y "ubicacion".
+        // Envío los datos al servidor de la DB
+        // Para enviar datos a la DB los nombres de cada campo requerido debe ser igual
+        // al que está en la DB. En este caso "nombre" y "ubicacion".
         axios.post('http://localhost:8082/api/rutas', datos)
             .then(res => {
+                console.log('ruta creada con exito!')
                 // Limpio los campos de texto
                 puertoOrigen.current.value = ''
                 puertoDestino.current.value = ''
                 distancia.current.value = ''
+                
+                getRutas() // SE ACTUALIZA LA LISTA DE RUTAS CREADAS
             
             })
             .catch(error => {
-                console.log("Error in Crear rutas!" + error)
+                console.log("Error al Crear rutas!")
+                console.log(error)
                 console.log(datos)
             })
-        
-        // Se vuelve a hacer una solicitud para que se renderice el nuevo puerto creado
-        axios.get('http://localhost:8082/api/rutas')
-            .then(res => {
-                setRutas(res.data)                
-            })
-            .catch(error => console.log(error))
+                
     }
 
+
+    let [ readOnly, setReadOnly ] = useState(true) // PARA CONTROLAR EL BOTON DE EDITAR EL VALOR DE UNA MILLA
+    
+    let [ valor_milla, setValor_milla ] = useState(3500)
+
+    function establecerValorPorMilla() {
+        // Estable si el input sera editable o no.
+        setReadOnly(!readOnly)
+
+        // Toma el valor por milla que haya establecido el usuario
+        if(!readOnly){
+            console.log(`Valor por milla: ${valor_milla}`)
+        }
+
+    }
+    
     let [ modal, setModal ] = useState([])
+
+    function handleChange(e) {
+        setValor_milla(e.target.value)
+        e.preventDefault()
+    }
 
     return (
         <Fragment>
@@ -68,8 +100,7 @@ export default function Dashboard() {
                         <img src="/img/image 1.png" alt=""/>
                     </header>
         
-                    {/*
-                    <!-- Topbar --> */}
+                    {/*<!-- Topbar --> */}
                     <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
         
                         {/*
@@ -283,66 +314,60 @@ export default function Dashboard() {
                         </ul>
         
                     </nav>
-                    {/*
-                    <!-- End of Topbar --> */}
         
-                    {/*
-                    <!-- Begin Page Content --> */}
                     <div className="container-fluid">
-                        {/*
-                        <!-- row --> */}
                         <div className="row">
         
-                            {/*
-                            <!-- <div className="col-2 shadow p-3 bg-body rounded"> --> */}
-                            {/*
-                            <!-- Sidebar --> */}
                             <NavbarLeft />
-                            {/*
-                            <!-- End of Sidebar --> */}
-                            {/*
-                            <!-- </div> --> */}
         
                             <div className="col">
                                 <form className="g-3 mt-5">
                                     <div className="col-md-6 mx-auto">
-                                        <label for="inputEmail4" className="form-label">Nombre del puerto origen</label>
-                                        <input ref={puertoOrigen} type="text" className="form-control" id=""/>
+                                        <label htmlFor="puertoOrigen" className="form-label">Nombre del puerto origen</label>
+                                        <select className="form-control" id="puertoOrigen" ref={puertoOrigen}>
+                                            {puertos.map(puerto => {
+                                                return <option key={puerto._id} value={puerto.nombre} >{puerto.nombre}</option>
+                                            })}
+                                        </select>
+                                        {/* <input ref={puertoOrigen} type="text" className="form-control" id=""/> */}
                                     </div>
         
                                     <div className="col-md-6 mx-auto">
-                                        <label for="inputEmail4" className="form-label">Nombre del puerto destino</label>
-                                        <input ref={puertoDestino} type="text" className="form-control" id=""/>
+                                        <label htmlFor="puertoDestino" className="form-label">Nombre del puerto destino</label>
+                                        <select className="form-control" id="puertoDestino" ref={puertoDestino} >
+                                            {puertos.map(puerto => {
+                                                return <option key={puerto._id} value={puerto.nombre}> {puerto.nombre} </option>
+                                            })}
+                                        </select>
                                     </div>
         
                                     <div className="col-md-6 mx-auto">
-                                        <label for="inputCity" className="form-label">DIstancia entre los puertos</label>
+                                        <label htmlFor="inputCity" className="form-label">Distancia entre los puertos (milla náutica)</label>
                                         <input ref={distancia} type="text" className="form-control" id=""/>
                                     </div>
         
                                     <div className="col-md-6 mt-5 mx-auto">
                                         <button 
-                                            onClick={guardar}
+                                            onClick={crearRuta}
                                             type="button" className="btn btn-primary border-0"
                                             style={{backgroundColor: "#4aff2f"}}>Crear</button>
                                     </div>
                                 </form>
                             </div>
         
-                            {/*
-                            <!-- Sidebar --> */}
                             <div className="col-4 shadow p-3 bg-body rounded">
                                 <div className="row mb-2">
                                     <form
                                         className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                                         <div className="input-group">
-                                            <input type="text" value="$ 5000" className="form-control bg-light border-1 small"
-                                                aria-label="Search" aria-describedby="basic-addon2" readonly/>
+                                            <input onChange={handleChange} type="text" value={valor_milla} className="form-control bg-light border-1 small"
+                                                aria-label="Search" aria-describedby="basic-addon2" readOnly={readOnly} />
                                             <div className="input-group-append">
-                                                <button className="btn btn-primary" type="button">
-                                                    <i className="far fa-edit"></i>
-                                                    {/*
-                                                    <!-- <i className="fas fa-search fa-sm"></i> --> */}
+                                                <button 
+                                                    onClick={establecerValorPorMilla} 
+                                                    className={readOnly ? "btn btn-primary" : "btn btn-success"} 
+                                                    type="button">
+                                                    <i className={readOnly ? "far fa-edit" : "far fa-check-square" }></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -361,21 +386,9 @@ export default function Dashboard() {
                                     })}
                                 </div>
                             </div>
-                            {/*
-                            <!-- End of Sidebar --> */}
                         </div>
-                        {/*
-                        <!-- end-row --> */}
                     </div>
-                    {/*
-                    <!-- /.container-fluid --> */}
-        
                 </div>
-                {/*
-                <!-- End of Main Content --> */}
-        
-                {/*
-                <!-- Footer --> */}
                 <footer className="sticky-footer bg-white">
                     <div className="container my-auto">
                         <div className="copyright text-center my-auto">
@@ -383,12 +396,7 @@ export default function Dashboard() {
                         </div>
                     </div>
                 </footer>
-                {/*
-                <!-- End of Footer --> */}
-        
             </div>
-            {/*
-            <!-- End of Content Wrapper --> */}
         </div>        
         <ModalRuta modal={modal} />
         </Fragment>

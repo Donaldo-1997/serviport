@@ -27,7 +27,7 @@ export function Header({ ruta, session }) {
                         <Link to="/" >Inicio</Link>
                     </li>
                     <li className="nav-item dropdown no-arrow d-sm mr-3">
-                        <Link to="/#" >Quienes somos</Link>
+                        <Link to="/crear-orden" >generar orden de despacho</Link>
                     </li>
                     {ruta === "register" || session ?
                         null
