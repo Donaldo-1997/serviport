@@ -55,5 +55,5 @@ router.put('/:id', (req, res) => {
       .then(ruta => res.json({ mgs: 'Ruta borrada exitosamente!' }))
       .catch(error => res.status(404).json({ error: 'No such a orden' }));
   });
-  
+
   module.exports = router;

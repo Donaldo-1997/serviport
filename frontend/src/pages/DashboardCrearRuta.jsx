@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import { NavbarLeft } from '../components/NavbarLeft';
 import { ModalRuta } from '../components/ModalRuta';
+import { ValorPorMilla } from '../components/ValorPorMilla';
 
 export default function Dashboard() {
     
@@ -11,7 +12,7 @@ export default function Dashboard() {
     const [ rutas, setRutas ] = useState([])
     const getRutas = () => { 
         axios.get('http://localhost:8082/api/rutas')
-        .then(res => setRutas(res.data))
+            .then(res => setRutas(res.data))
             .catch(error => console.log(error))
     }
     // Esto ejecutará la funcion cuando se renderice este componente
@@ -61,29 +62,11 @@ export default function Dashboard() {
                 
     }
 
-
-    let [ readOnly, setReadOnly ] = useState(true) // PARA CONTROLAR EL BOTON DE EDITAR EL VALOR DE UNA MILLA
-    
-    let [ valor_milla, setValor_milla ] = useState(3500)
-
-    function establecerValorPorMilla() {
-        // Estable si el input sera editable o no.
-        setReadOnly(!readOnly)
-
-        // Toma el valor por milla que haya establecido el usuario
-        if(!readOnly){
-            console.log(`Valor por milla: ${valor_milla}`)
-        }
-
-    }
-    
-    let [ modal, setModal ] = useState([])
-
     function handleChange(e) {
-        setValor_milla(e.target.value)
         e.preventDefault()
     }
-
+    
+    let [ modal, setModal ] = useState([]) // PARA ENVIARLE DATOS AL MODAL
     return (
         <Fragment>
         <div id="wrapper">
@@ -356,23 +339,7 @@ export default function Dashboard() {
                             </div>
         
                             <div className="col-4 shadow p-3 bg-body rounded">
-                                <div className="row mb-2">
-                                    <form
-                                        className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                                        <div className="input-group">
-                                            <input onChange={handleChange} type="text" value={valor_milla} className="form-control bg-light border-1 small"
-                                                aria-label="Search" aria-describedby="basic-addon2" readOnly={readOnly} />
-                                            <div className="input-group-append">
-                                                <button 
-                                                    onClick={establecerValorPorMilla} 
-                                                    className={readOnly ? "btn btn-primary" : "btn btn-success"} 
-                                                    type="button">
-                                                    <i className={readOnly ? "far fa-edit" : "far fa-check-square" }></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
+                                <ValorPorMilla/>
                                 <h3>Rutas establecidas</h3>
                                 <div className="d-grid gap-2">
                                     {rutas.map(ruta => {

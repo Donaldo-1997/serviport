@@ -6,6 +6,7 @@ var cors = require('cors');
 const ordenes = require('./routes/api/ordenes');
 const puertos = require('./routes/api/puertos');
 const rutas = require('./routes/api/rutas');
+const milla = require('./routes/api/milla');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.get('/', (req, res) => res.send('serviport listo'));
 app.use('/api/ordenes', ordenes);
 app.use('/api/puertos', puertos);
 app.use('/api/rutas', rutas);
+app.use('/api/milla', milla);
 
 const port = process.env.PORT || 8082;
 
