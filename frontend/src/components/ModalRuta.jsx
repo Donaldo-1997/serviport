@@ -1,6 +1,17 @@
+import axios from 'axios'
 import React, { Fragment } from 'react'
 
-export function ModalRuta({ modal }) {
+export function ModalRuta({ modal, getRutas }) {
+
+    const eliminarRuta = () => {
+        axios.delete(`http://localhost:8082/api/rutas/${modal._id}`)
+            .then(res => {
+                getRutas()
+                // console.log(res)
+            })
+            .catch(error => console.log(error))
+    }
+
     return (
         <Fragment>
             <div className="modal fade" id="detalle_ruta" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -23,7 +34,9 @@ export function ModalRuta({ modal }) {
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-danger">Eliminar</button>
+                            <button 
+                                onClick={eliminarRuta}
+                                type="button" className="btn btn-danger" data-dismiss="modal">Eliminar</button>
                             <button type="button" className="btn btn-primary" data-dismiss="modal">Cerrar</button>
                         </div>
                     </div>

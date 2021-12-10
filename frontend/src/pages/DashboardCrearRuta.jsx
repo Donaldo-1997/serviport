@@ -365,7 +365,7 @@ export default function Dashboard() {
                 </footer>
             </div>
         </div>        
-        <ModalRuta modal={modal} />
+        <ModalRuta modal={modal} getRutas={getRutas} />
         </Fragment>
     );
 }

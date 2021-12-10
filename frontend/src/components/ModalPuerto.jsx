@@ -1,6 +1,15 @@
+import axios from 'axios'
 import React, { Fragment } from 'react'
 
-export function ModalPuerto({ modal }) {
+export function ModalPuerto({ modal, getPuertos }) {
+
+    const eliminarPuerto = () => {
+        axios.delete(`http://localhost:8082/api/puertos/${modal._id}`)
+            .then(res => {
+                getPuertos()
+            })
+            .catch(error => console.log(error))
+    }
     // console.log(modal)
     return (
         <Fragment>
@@ -23,7 +32,9 @@ export function ModalPuerto({ modal }) {
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-danger">Eliminar</button>
+                            <button
+                                onClick={eliminarPuerto}
+                                type="button" className="btn btn-danger" data-dismiss="modal">Eliminar</button>
                             <button type="button" className="btn btn-primary" data-dismiss="modal">Cerrar</button>
                         </div>
                     </div>

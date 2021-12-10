@@ -1,11 +1,20 @@
-import React, { useRef } from 'react'
-import { Fragment } from 'react/cjs/react.production.min';
+import React, { useRef, useState, Fragment, useEffect } from 'react'
 //import { dataContainer } from '../data';
 import { Header } from '../components/Header';
 import axios from 'axios';
 
 
 export default function GenerarOrden() {
+
+     // Traigo los datos de puertos del servidor    
+     const [ puertos, setPuertos ] = useState([])
+     useEffect(() => {
+         axios.get('http://localhost:8082/api/puertos')
+             .then(res => {
+                 setPuertos(res.data)                
+             })
+             .catch(error => console.log(error))
+     }, [])
 
     const origen = useRef()
     const destino = useRef()
@@ -58,31 +67,43 @@ export default function GenerarOrden() {
                                     <form className="user">
                                         <div className="form-group row">
                                             <div className="col-sm-6 mb-3 mb-sm-0">
-                                                <input type="text" className="form-control " ref={origen}
-                                                    placeholder="Origen de carga" />
+                                                <label htmlFor="origen" className="form-label">Origen de carga</label>
+                                                <select className="form-control " id="origen" ref={origen}>
+                                                    {puertos.map(puerto => {
+                                                        return <option key={puerto._id} value={puerto.nombre}> {puerto.nombre} </option>
+                                                    })}
+                                                </select>
                                             </div>
                                             <div className="col-sm-6">
-                                                <input type="text" className="form-control " ref={destino}
-                                                    placeholder="Destino de carga" />
+                                                <label htmlFor="destino" className="form-label">Destino de carga</label>
+                                                <select className="form-control " id="destino" ref={destino}>
+                                                    {puertos.map(puerto => {
+                                                        return <option key={puerto._id} value={puerto.nombre}> {puerto.nombre} </option>
+                                                    })}
+                                                </select>
                                             </div>
                                         </div>
                                         <div className="form-group row">
                                             <div className="col-sm-6 mb-3 mb-sm-0">
-                                                <input type="text" className="form-control " ref={numContainer}
+                                                <label htmlFor="numContainer" className="form-label">Container No.</label>
+                                                <input type="text" className="form-control" id="numContainer" ref={numContainer}
                                                     placeholder="Container No." />
                                             </div>
                                             <div className="col-sm-6">
-                                                <input type="text" className="form-control " ref={dimensionContainer}
-                                                    placeholder="Dimensión del container" />
+                                                <label htmlFor="dimensionContainer" className="form-label">Dimensión del container</label>
+                                                <input type="text" className="form-control " id="dimensionContainer" ref={dimensionContainer}
+                                                    placeholder="*Ej: 40 pies" />
                                             </div>
                                         </div>
                                         <div className="form-group row">
                                             <div className="col-sm-6 mb-3 mb-sm-0">
-                                                <input type="text" className="form-control " ref={pesoContainer}
-                                                    placeholder="Peso del container" />                                                
+                                                <label htmlFor="pesoContainer" className="form-label">Peso del container</label>
+                                                <input type="text" className="form-control " id="pesoContainer" ref={pesoContainer}
+                                                    placeholder="*Ej: 29 toneladas" />                                                
                                             </div>
                                             <div className="col-sm-6">
-                                                <input type="text" className="form-control " ref={descripcion}
+                                                <label htmlFor="descripcion" className="form-label">Descripcion</label>
+                                                <input type="text" className="form-control " id="descripcion" ref={descripcion}
                                                     placeholder="Descripción" />
                                             </div>
                                         </div>

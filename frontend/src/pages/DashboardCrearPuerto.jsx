@@ -9,13 +9,15 @@ import { ModalPuerto } from '../components/ModalPuerto';
 export default function DashboardCrearPuerto () {
     const [ puertos, setPuertos ] = useState([])
 
-    useEffect(() => {
+    const getPuertos = () => {
         axios.get('http://localhost:8082/api/puertos')
             .then(res => {
                 setPuertos(res.data)                
             })
             .catch(error => console.log(error))
-    }, [])
+    }
+
+    useEffect(() => getPuertos(), [])
 
     let nomPuerto = useRef()
     let ubicPuerto = useRef()
@@ -42,11 +44,7 @@ export default function DashboardCrearPuerto () {
             })
         
         // Se vuelve a hacer una solicitud para que se renderice el nuevo puerto creado
-        axios.get('http://localhost:8082/api/puertos')
-            .then(res => {
-                setPuertos(res.data)                
-            })
-            .catch(error => console.log(error))
+        getPuertos()
     }
 
     let [ modal, setModal ] = useState([])
@@ -340,7 +338,7 @@ export default function DashboardCrearPuerto () {
     
             {/* <!-- End of Page Wrapper --> */}
         </div>
-        <ModalPuerto modal={modal} />
+        <ModalPuerto modal={modal} getPuertos={getPuertos} />
         {/* { modal ? <Modal modal={modal} /> : console.log(modal) } */}
         </Fragment>
 

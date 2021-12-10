@@ -5,28 +5,28 @@ export const ValorPorMilla = () => {
     let [ readOnly, setReadOnly ] = useState(true) // PARA CONTROLAR EL BOTON DE EDITAR EL VALOR DE UNA MILLA
     
     const txt_valor_milla = useRef()
-    let [ valor_milla, setValor_milla ] = useState(0)
-    // let valor_milla = 0
-    let idMilla
+    const [ valor_milla, setValor_milla ] = useState(0)
+    const [idMilla, setIdMilla] = useState('')
     
     useEffect(() => getValorMilla(), [])
 
     const getValorMilla = () => {
         axios.get('http://localhost:8082/api/milla')
-            .then(res => {
-                res.data.map(dato => {
-                    setValor_milla(parseFloat(dato.valor))
-                    idMilla = dato._id
-                    console.log(valor_milla)
-                })
+            .then(res => {   
+                res.data.map(({valor, _id}) => {
+                    setValor_milla(valor)
+                    setIdMilla(_id)
+                    // console.log(`Valor: ${valor} id: ${_id}`)
+                })             
+                
+                
             })
             .catch(error => console.log(error))
     }
 
     
     const establecerValorPorMilla = () => {
-        // Toma el valor por milla que haya establecido el usuario
-        console.log(`Valor por milla: ${valor_milla}`)
+        // Toma el valor por milla que haya establecido el usuario        
         let datos = {
             valor: txt_valor_milla.current.value
         }
@@ -35,16 +35,15 @@ export const ValorPorMilla = () => {
             .then(res => {
                 console.log('Valor por milla actualizado')
                 getValorMilla()
+                setReadOnly(!readOnly)
             })
             .catch(error => {
                 console.log(error)
-                console.log(datos)
             })
     }
 
     return (
         <div className="row mb-2">
-            {window.onload = () => getValorMilla()}
             <form
                 className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                 <div className="input-group">
