@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const OrdenSchema = new mongoose.Schema({
+const OrdenSchema = new Schema({
     origen: {
         type: String,
         required: true
@@ -24,7 +24,34 @@ const OrdenSchema = new mongoose.Schema({
     descripcion: {
         type: String,
         required: true
+    },
+    estado: {
+        type: String,
+        required: true
+    },
+    aceptada: {
+        type: Boolean,
+        required: true
+    },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user'
+    },
+    fecha: {
+        type: String,
+        required: true
     }
 })
 
-module.exports = Orden = mongoose.model('orden', OrdenSchema);
+// Para controlar lo que se devuelve como respuesta
+OrdenSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id
+        delete returnedObject._id
+        delete returnedObject.__v
+
+    }
+})
+
+const Orden = model('orden', OrdenSchema);
+module.exports = Orden;

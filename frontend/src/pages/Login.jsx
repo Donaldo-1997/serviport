@@ -1,43 +1,35 @@
 import React, {Fragment, useEffect, useRef, useState} from 'react'
 import { Link } from 'react-router-dom';
 
+import loginService from '../services/login'
+import ordenService from '../services/ordenes'
 import { Header } from '../components/Header';
 
 
 
-export default function Login(props) {
-    const [ users, setUsers ] = useState([])
-    // traigo datos de la DB
-    // useEffect(() => {
-    //     fetch('http://localhost:3004/users')
-    //         .then(res => res.json())
-    //         .then(data => setUsers(data))
-    // }, [])
-
-    // Obtengo los datos de los campos de texto
-    const email = useRef();
-    const password = useRef();
+export function Login() {
+    const [ userEmail, setUserEmail ] = useState('')
+    const [ password, setPassword ] = useState('')
     
     // Compruebo que se encuantran en la base de datos
-    const comprobar = () => {        
-        // Busco que el usuario ingresado en el campo de texto exista en la DB.
-        let searchUser = users.find(user => {
-            if (user.email === email.current.value) {
-                return user
-            }
-        })
-        
-        // Compruebo que haya infromación y le mando el rol que tiene el usuario
-        if (searchUser){
-            props.comprobar(searchUser.rol)                
-        } else {
-            console.log('no se encontro nada')
+    const handleLogin = async () => {        
+        try {
+            const user = await loginService.login({
+                correo: userEmail, // Los nombres tienen que ser iguakes a los que estan en el backend
+                password
+            })
+            
+            window.localStorage.setItem(
+                'loggedOrdenAppUser', JSON.stringify(user)
+            )
+            ordenService.setToken(user.token) // Uso el service ordenes para llevarme informacion del usuario devuelto por login
+
+            setUserEmail('')
+            setPassword('')
+        } catch (error) {
+            console.log(error)
+            console.log(`${userEmail} ${password}`)
         }
-
-        // Reseteo los campos de texto
-        email.current.value = "";
-        password.current.value = "";
-
     }
 
 
@@ -62,21 +54,40 @@ export default function Login(props) {
                                             </div>
                                             <form className="user">
                                                 <div className="form-group">
-                                                    <input ref={email} type="email" className="form-control form-control-user"
-                                                        id="exampleInputEmail" aria-describedby="emailHelp"
-                                                        placeholder="Enter Email Address..."/>
+                                                    <input 
+                                                        type="email"  
+                                                        name="UserEmail"
+                                                        value={userEmail}
+                                                        onChange={({ target }) => setUserEmail(target.value)}
+                                                        placeholder="Enter Email Address..."
+                                                        className="form-control form-control-user" 
+                                                        aria-describedby="emailHelp"
+                                                    />
                                                 </div>
                                                 <div className="form-group">
-                                                    <input ref={password} type="password" className="form-control form-control-user"
-                                                        id="exampleInputPassword" placeholder="Password"/>
+                                                    <input 
+                                                        type="password"
+                                                        name="Password" 
+                                                        value={password} 
+                                                        onChange={({ target }) => setPassword(target.value)}                                                         
+                                                        placeholder="Password"
+                                                        className="form-control form-control-user"
+                                                    />
                                                 </div>
                                                 <div className="form-group">
                                                     <div className="custom-control custom-checkbox small">
-                                                        <input type="checkbox" className="custom-control-input" id="customCheck"/>
+                                                        <input 
+                                                            type="checkbox" 
+                                                            id="customCheck"
+                                                            className="custom-control-input" />
                                                         <label className="custom-control-label" htmlFor="customCheck">Recuérdame</label>
                                                     </div>
                                                 </div>
-                                                <input type="button" value="Iniciar sesión" onClick={comprobar} className="submit-boton btn btn-succes btn-user btn-block"/>                                                    
+                                                <Link to="/crear-orden" 
+                                                    onClick={handleLogin} 
+                                                    value="Iniciar sesión" 
+                                                    type="button" 
+                                                    className="submit-boton btn btn-succes btn-user btn-block">Iniciar sesion</Link>                                                    
                                             </form>
                                             <hr/>
                                             <div className="text-center">

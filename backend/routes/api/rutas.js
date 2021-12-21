@@ -25,7 +25,7 @@ router.get('/', (req, res) => {
 // @access Public
 router.get('/:id', (req, res) => {
     Ruta.findById(req.params.id)
-        .then( ruta => res.json())
+        .then( ruta => res.json(ruta))
         .catch( error => res.status(400).json({ rutaNoEncontrado: 'No se encontro el ruta' }));
 })
 

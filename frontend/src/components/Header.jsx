@@ -24,7 +24,7 @@ export function Header({ ruta, session }) {
                 {/* <!-- Topbar Navbar --> */}
                 <ul className="navbar-nav ml-auto">
                     <li className="nav-item dropdown no-arrow d-sm mr-3">
-                        <Link to="/" >Inicio</Link>
+                        <Link to="/mostrar-ordenes" >Dashboard</Link>
                     </li>
                     <li className="nav-item dropdown no-arrow d-sm mr-3">
                         <Link to="/crear-orden" >generar orden de despacho</Link>

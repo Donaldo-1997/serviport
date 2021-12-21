@@ -1,0 +1,13 @@
+POST http://localhost:8082/api/ordenes 
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxYjhjZDAwMjg4NzNkMWJhNDljMTY0MSIsImNvcnJlbyI6ImRvbmFsZG9AY29ycmVvLmNvbSIsImlhdCI6MTYzOTc2MDk3MH0.ediAOhAG0ReGxBP7AIEnaAVjyEg5f-ds2ddmvWpAs_M
+
+{
+    "origen": "Puerto de Tumaco",
+    "destino": "Puerto de Buenaventura",
+    "numero": "0001",
+    "dimension": "30",
+    "peso": "25",
+    "descripcion": "Esta es la descripcion del container",
+    "estado": "Pendiente"
+}

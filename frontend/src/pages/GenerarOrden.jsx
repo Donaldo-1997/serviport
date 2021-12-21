@@ -3,6 +3,9 @@ import React, { useRef, useState, Fragment, useEffect } from 'react'
 import { Header } from '../components/Header';
 import axios from 'axios';
 
+import ordenService from '../services/ordenes'
+import { ModalOrdenExterno } from '../components/ModalOrdenExterno';
+
 
 export default function GenerarOrden() {
 
@@ -30,14 +33,16 @@ export default function GenerarOrden() {
             numero: numContainer.current.value,
             dimension: dimensionContainer.current.value,
             peso: pesoContainer.current.value,
-            descripcion: descripcion.current.value
-        }
-
-        // Envío los datos al servidor de la DB
-        axios.post('http://localhost:8082/api/ordenes', datos)
+            descripcion: descripcion.current.value,
+            estado: 'Pendiente',
+            userId: '61b8cd0028873d1ba49c1641' // Aqui se debe traer el id del usuario que ha iniciado sesion
+        }       
+            
+        ordenService.create(datos)
             .then(res => {
                 console.log(res.data)
-                 // Limpio los campos de texto
+                setOrdenes(ordenes.concat(res))
+                // Limpio los campos de texto
                 origen.current.value = ''
                 destino.current.value = ''
                 numContainer.current.value = ''
@@ -46,9 +51,22 @@ export default function GenerarOrden() {
                 descripcion.current.value = ''
             })
             .catch(error => console.log("Error in GenerarOrden!" + error))
-
-       
     }
+
+    useEffect(() => getOrdenes(), [])
+
+    const [ ordenes, setOrdenes ] = useState([])
+    const getOrdenes = () => {
+        // De esta forma empiezo a usar el concepto de servicios, ya que empiezo a utilizar
+        // servicios creados por mi.
+        ordenService // Con esto me ahorro tener que escribir a cada rato la ruta a la que haré peticiones
+            .getAll()
+            .then(initialOrdenes => {
+                setOrdenes(initialOrdenes)
+            })
+    }
+
+    const [ dataModal, setDataModal ] = useState({})
 
     return (
         <Fragment>
@@ -115,11 +133,33 @@ export default function GenerarOrden() {
                                     </form>
                                 </div>
                             </div>
+                            <div className="col-lg-5">
+                                <div className="p-5">
+                                    <div className="text-center">
+                                        <h1 className="h4 text-gray-900 mb-4">Ordenes de despacho</h1>
+                                    </div>
+                                    <div className="d-grid gap-2">
+                                    {ordenes.map(orden => {
+                                        return (
+                                        <button
+                                            key={orden.id}
+                                            onClick={() => {
+                                                setDataModal(orden)
+                                            }} 
+                                            className="color-1 btn border-0 btn-block text-dark" 
+                                            type="button" data-toggle="modal" data-target="#detalle_orden" style={{fontSize: "12px"}}>
+                                            {orden.origen} - {orden.destino}
+                                        </button>
+                                        )
+                                    })}                                    
+                                </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-
             </div>
+            <ModalOrdenExterno orden={dataModal} />
         </Fragment>
     );
 }
